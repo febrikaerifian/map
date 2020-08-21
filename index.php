@@ -65,10 +65,16 @@ $center=mysqli_query($koneksi,$sqlcenter);
 $sql2 = "SELECT username, MAX(DATETIME),lat,`long` FROM log_location GROUP BY username";
 $result2=mysqli_query($koneksi,$sql2);
 ?>
-
 <?php
 
-$sqltab = "SELECT username,company, MAX(DATETIME) as datetime,lat,`long` FROM log_location GROUP BY username";
+$sql3 = "SELECT * FROM log_location
+WHERE username ='user494'";
+$result3=mysqli_query($koneksi,$sql3);
+?>
+<?php
+
+$sqltab = "SELECT * FROM log_location
+WHERE username ='user494'";
 $resulttab=mysqli_query($koneksi,$sqltab);
 ?>
 
@@ -170,8 +176,12 @@ while($rows=mysqli_fetch_assoc($center)){
         center: [<?php echo $rows['lat']  ?>,<?php echo $rows['long']  ?>],
         <?php
 }
-?>
-        zoom: 9,
+?>        zoomControl: {
+	'position'  : 'top-left',
+	'slider'    : true,
+	'zoomLevel' : true
+  },
+        zoom: 20,
         baseLayer: new maptalks.TileLayer('base', {
           urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
           subdomains: ['a','b','c','d']
@@ -181,7 +191,32 @@ while($rows=mysqli_fetch_assoc($center)){
      
 
      var layer = new maptalks.VectorLayer('vector').addTo(map);
- <?php
+
+
+<?php
+while($rows=mysqli_fetch_assoc($result3)){
+?>
+      var marker = new maptalks.Marker([<?php echo $rows['lat']  ?>,<?php echo $rows['long']  ?>], {
+        symbol:{
+            'textName' :  '',
+            'textDy' : -20,
+            'textFaceName' : 'arial',
+            'textSize' : 12,
+            'textFill' : 'white',
+'textHaloFill' : '#fff',
+          'markerType': 'ellipse',
+
+          'markerFill' : '#FA4C19',
+          'markerLineColor' : '#FA4C19',
+
+          'markerWidth'  : 4,
+           'markerHeight' : 4
+        }
+      }).addTo(layer);
+             		<?php
+}
+?>
+  <?php
 while($rows=mysqli_fetch_assoc($result2)){
 ?>
       var marker = new maptalks.Marker([<?php echo $rows['lat']  ?>,<?php echo $rows['long']  ?>], {
@@ -204,12 +239,11 @@ while($rows=mysqli_fetch_assoc($result2)){
              		<?php
 }
 ?>
- 
 
     </script>
                 
                 <div class="map-float-table2 width-sm hidden-xs p-15">
-                    <h4 class="m-t-0 text-primary"><i class="fa fa-map-marker text-danger m-r-5"></i> Users List</h4>
+                    <h4 class="m-t-0 text-primary"><i class="fa fa-map-marker text-danger m-r-5"></i> User Details</h4>
     
                     <div data-scrollbar="true" class="height-md"><br><br>
                         <table class="table tablesedang table-inverse">
